@@ -1,0 +1,11 @@
+{
+  "domain": "gefrierschrank_inventar",
+  "name": "Gefrierschrank Inventar",
+  "codeowners": ["@dein-github-name"],
+  "config_flow": true,
+  "documentation": "https://github.com/dein-github-name/gefrierschrank_inventar",
+  "issue_tracker": "https://github.com/dein-github-name/gefrierschrank_inventar/issues",
+  "iot_class": "local_push",
+  "requirements": ["aiosqlite>=0.19.0"],
+  "version": "0.1.0"
+}

@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Freezer Inventory",
+        "description": "How many compartments does your freezer have in total (open shelves and drawers combined)?",
+        "data": {
+          "anzahl_faecher": "Number of compartments"
+        }
+      },
+      "faecher": {
+        "title": "Name the compartments",
+        "description": "Give each compartment a name."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Add another compartment",
+        "data": {
+          "weiteres_fach_name": "Name of the new compartment"
+        }
+      }
+    }
+  }
+}

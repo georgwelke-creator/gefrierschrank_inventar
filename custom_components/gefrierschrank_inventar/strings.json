@@ -1,0 +1,28 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gefrierschrank Inventar einrichten",
+        "description": "Wie viele Fächer hat dein Gefrierschrank insgesamt (offene Ablagen und Schubladen zusammen)?",
+        "data": {
+          "anzahl_faecher": "Anzahl Fächer"
+        }
+      },
+      "faecher": {
+        "title": "Fächer benennen",
+        "description": "Vergib für jedes Fach einen Namen.",
+        "data": {}
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Weiteres Fach hinzufügen",
+        "data": {
+          "weiteres_fach_name": "Name des neuen Fachs"
+        }
+      }
+    }
+  }
+}

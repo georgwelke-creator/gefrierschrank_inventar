@@ -1,0 +1,121 @@
+einlagern:
+  name: Artikel einlagern
+  description: Legt einen neuen Artikel in einem Fach an. Entspricht dem manuellen Testformular für Phase 1.
+  fields:
+    fach_id:
+      name: Fach
+      description: ID des Fachs (siehe Attribut fach_id am jeweiligen Bestand-Sensor).
+      required: true
+      example: 1
+      selector:
+        number:
+          min: 1
+          mode: box
+    name:
+      name: Artikelname
+      description: z. B. "Fischstäbchen" oder "Gemüsemix".
+      required: true
+      example: Fischstäbchen
+      selector:
+        text:
+    kategorie:
+      name: Kategorie
+      description: z. B. "Fleisch", "Gemüse", "Fertiggericht".
+      example: Fisch
+      selector:
+        text:
+    menge:
+      name: Menge
+      description: Standardmäßig 1 Packung/Stück.
+      default: 1
+      selector:
+        number:
+          min: 0
+          step: 0.5
+          mode: box
+    quelle:
+      name: Quelle
+      description: Woher der Eintrag stammt.
+      default: manuell
+      selector:
+        select:
+          options:
+            - manuell
+            - sprache
+            - bild
+    notiz:
+      name: Notiz
+      description: Optionale freie Anmerkung.
+      selector:
+        text:
+
+entnehmen:
+  name: Artikel entnehmen
+  description: Markiert einen Artikel als entnommen. Entweder direkt über eintrag_id, oder über Fach + Name (entnimmt dann den ältesten passenden Eintrag).
+  fields:
+    eintrag_id:
+      name: Eintrag-ID
+      description: Konkrete ID des Inventareintrags, falls bekannt.
+      selector:
+        number:
+          min: 1
+          mode: box
+    fach_id:
+      name: Fach
+      description: Fach, aus dem entnommen wird (falls keine Eintrag-ID angegeben ist).
+      selector:
+        number:
+          min: 1
+          mode: box
+    name:
+      name: Artikelname
+      description: Name des entnommenen Artikels (falls keine Eintrag-ID angegeben ist).
+      selector:
+        text:
+
+mindestbestand_setzen:
+  name: Mindestbestand setzen
+  description: Legt eine Mindestbestand-Regel an oder aktualisiert sie.
+  fields:
+    bezug_typ:
+      name: Bezugstyp
+      required: true
+      selector:
+        select:
+          options:
+            - kategorie
+            - artikel_name
+            - fach
+    bezug_wert:
+      name: Bezugswert
+      description: Je nach Bezugstyp z. B. "Gemüse", "Fischstäbchen" oder die Fach-ID.
+      required: true
+      selector:
+        text:
+    schwellenwert:
+      name: Schwellenwert
+      required: true
+      selector:
+        number:
+          min: 0
+          step: 0.5
+          mode: box
+
+mindestbestand_entfernen:
+  name: Mindestbestand entfernen
+  description: Entfernt eine bestehende Mindestbestand-Regel.
+  fields:
+    bezug_typ:
+      name: Bezugstyp
+      required: true
+      selector:
+        select:
+          options:
+            - kategorie
+            - artikel_name
+            - fach
+    bezug_wert:
+      name: Bezugswert
+      required: true
+      selector:
+        text:
