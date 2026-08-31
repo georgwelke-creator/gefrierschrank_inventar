@@ -51,3 +51,8 @@ ATTR_EINTRAG_ID = "eintrag_id"
 ATTR_BEZUG_TYP = "bezug_typ"
 ATTR_BEZUG_WERT = "bezug_wert"
 ATTR_SCHWELLENWERT = "schwellenwert"
+ATTR_KORRIGIERT = "korrigiert"
+
+# Ab welcher Ähnlichkeit (difflib-Ratio, 0..1) ein bekannter Artikelname
+# als vermutliche Verhörer-Korrektur übernommen wird.
+AEHNLICHKEITS_SCHWELLE = 0.72

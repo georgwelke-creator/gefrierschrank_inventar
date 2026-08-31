@@ -11,7 +11,12 @@ import logging
 from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import (
+    HomeAssistant,
+    ServiceCall,
+    ServiceResponse,
+    SupportsResponse,
+)
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 import voluptuous as vol
@@ -22,6 +27,7 @@ from .const import (
     ATTR_EINTRAG_ID,
     ATTR_FACH_ID,
     ATTR_KATEGORIE,
+    ATTR_KORRIGIERT,
     ATTR_MENGE,
     ATTR_NAME,
     ATTR_NOTIZ,
@@ -39,6 +45,7 @@ from .const import (
     SERVICE_MINDESTBESTAND_SETZEN,
     SIGNAL_INVENTAR_AKTUALISIERT,
 )
+from .matching import finde_aehnlichen_artikelnamen
 from .storage import GefrierschrankStorage
 
 _LOGGER = logging.getLogger(__name__)
@@ -140,16 +147,31 @@ async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry) -> Non
 def _async_register_services(hass: HomeAssistant, entry: ConfigEntry) -> None:
     storage: GefrierschrankStorage = hass.data[DOMAIN][entry.entry_id]["storage"]
 
-    async def async_einlagern(call: ServiceCall) -> None:
+    async def async_einlagern(call: ServiceCall) -> ServiceResponse:
+        gewuenschter_name = call.data[ATTR_NAME]
+        bekannte_namen = await storage.async_get_bekannte_artikelnamen()
+        aehnlicher_name = finde_aehnlichen_artikelnamen(gewuenschter_name, bekannte_namen)
+        finaler_name = aehnlicher_name or gewuenschter_name
+        if aehnlicher_name is not None:
+            _LOGGER.info(
+                "Gefrierschrank Inventar: '%s' als '%s' interpretiert (Ähnlichkeitsabgleich)",
+                gewuenschter_name,
+                aehnlicher_name,
+            )
+
         await storage.async_einlagern(
             fach_id=call.data[ATTR_FACH_ID],
-            name=call.data[ATTR_NAME],
+            name=finaler_name,
             kategorie=call.data.get(ATTR_KATEGORIE),
             menge=call.data.get(ATTR_MENGE, 1),
             quelle=call.data.get(ATTR_QUELLE, QUELLE_MANUELL),
             notiz=call.data.get(ATTR_NOTIZ),
         )
         async_dispatcher_send(hass, SIGNAL_INVENTAR_AKTUALISIERT)
+        return {
+            ATTR_NAME: finaler_name,
+            ATTR_KORRIGIERT: aehnlicher_name is not None,
+        }
 
     async def async_entnehmen(call: ServiceCall) -> None:
         if ATTR_EINTRAG_ID in call.data:
@@ -180,7 +202,13 @@ def _async_register_services(hass: HomeAssistant, entry: ConfigEntry) -> None:
         )
         async_dispatcher_send(hass, SIGNAL_INVENTAR_AKTUALISIERT)
 
-    hass.services.async_register(DOMAIN, SERVICE_EINLAGERN, async_einlagern, schema=EINLAGERN_SCHEMA)
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_EINLAGERN,
+        async_einlagern,
+        schema=EINLAGERN_SCHEMA,
+        supports_response=SupportsResponse.OPTIONAL,
+    )
     hass.services.async_register(DOMAIN, SERVICE_ENTNEHMEN, async_entnehmen, schema=ENTNEHMEN_SCHEMA)
     hass.services.async_register(
         DOMAIN, SERVICE_MINDESTBESTAND_SETZEN, async_mindestbestand_setzen, schema=MINDESTBESTAND_SETZEN_SCHEMA

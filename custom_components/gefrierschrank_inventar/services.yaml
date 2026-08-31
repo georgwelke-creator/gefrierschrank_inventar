@@ -1,6 +1,10 @@
 einlagern:
   name: Artikel einlagern
-  description: Legt einen neuen Artikel in einem Fach an. Entspricht dem manuellen Testformular für Phase 1.
+  description: >-
+    Legt einen neuen Artikel in einem Fach an. Gleicht den Namen gegen
+    bereits bekannte Artikelnamen ab (z. B. um ein Verhörer bei der
+    Spracheingabe wie "Fischsebchen" automatisch auf "Fischstäbchen" zu
+    korrigieren) und gibt den tatsächlich gespeicherten Namen zurück.
   fields:
     fach_id:
       name: Fach
@@ -48,6 +52,8 @@ einlagern:
       description: Optionale freie Anmerkung.
       selector:
         text:
+  response:
+    optional: true
 
 entnehmen:
   name: Artikel entnehmen

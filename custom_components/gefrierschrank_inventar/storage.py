@@ -263,6 +263,17 @@ class GefrierschrankStorage:
         row = await cursor.fetchone()
         return int(row["n"])
 
+    async def async_get_bekannte_artikelnamen(self) -> list[str]:
+        """Liefert alle bisher jemals verwendeten Artikelnamen (unabhängig vom Status).
+
+        Dient als wachsendes Vokabular für den Ähnlichkeitsabgleich bei der
+        Spracheingabe, z. B. um ein Verhörer wie "Fischsebchen" automatisch
+        auf den bereits bekannten Namen "Fischstäbchen" zu korrigieren.
+        """
+        cursor = await self._db.execute("SELECT DISTINCT name FROM inventar_eintrag")
+        rows = await cursor.fetchall()
+        return [row["name"] for row in rows]
+
     # ------------------------------------------------------------------
     # Mindestbestand
     # ------------------------------------------------------------------
